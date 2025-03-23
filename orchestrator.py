@@ -8,12 +8,13 @@ from agents.writer import WriterAgent
 from agents.tester import TesterAgent
 from agents.debugger import DebuggerAgent
 from docker.errors import DockerException
-
+from docker import DockerClient
+from docker.errors import DockerException
 class Orchestrator:
     def __init__(self, openai_api_key: str):
         self.openai_api_key = openai_api_key
         try:
-            self.docker_client = docker.from_env()
+            self.docker_client = DockerClient(base_url="npipe:////./pipe/docker_engine")
         except DockerException as e:
             print(f"Error initializing Docker client: {e}")
             self.docker_client = None
