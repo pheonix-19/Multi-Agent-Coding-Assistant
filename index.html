@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Multi-Agent Coding Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .agent {
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+        .code-example {
+            margin: 20px 0;
+        }
+        .component-explanation {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .component-title {
+            color: #2980b9;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .workflow {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .workflow-step {
+            background-color: #e8f4f8;
+            border-left: 4px solid #27ae60;
+            padding: 10px 15px;
+        }
+        .workflow-step h4 {
+            margin-top: 0;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Autonomous Multi-Agent Coding Assistant</h1>
+        <p>A collaborative system of specialized AI agents that work together to design, code, and debug software projects autonomously.</p>
+        <img src="image.png" alt="alt text" width="auto" height="auto">
+        <h2>How It Works</h2>
+        <p>The system uses multiple AI agents with specialized skills that coordinate through a central orchestrator to solve complex programming tasks. Each agent has a specific role in the workflow:</p>
+
+        <div class="agent">
+            <h3>Architect Agent</h3>
+            <p>Designs system architecture and component relationships. It analyzes the task requirements and creates a detailed design specification, including components, interfaces, and data flow.</p>
+        </div>
+        <div class="agent">
+            <h3>Coder Agent</h3>
+            <p>Transforms specifications into working code. It takes the design created by the Architect Agent and generates functional code for each component.</p>
+        </div>
+        <div class="agent">
+            <h3>Tester Agent</h3>
+            <p>Creates test cases and validates functionality. It ensures that the generated code meets the requirements and works as expected by running automated tests.</p>
+        </div>
+        <div class="agent">
+            <h3>Debugger Agent</h3>
+            <p>Identifies and fixes issues in code. If the Tester Agent finds any issues, the Debugger Agent analyzes the test results and applies fixes to the code.</p>
+        </div>
+        <div class="agent">
+            <h3>Orchestrator</h3>
+            <p>Coordinates agent activities and manages workflow. It ensures that all agents work together in a seamless and efficient manner.</p>
+        </div>
+
+        <h2>Code Architecture</h2>
+        <h3>Orchestrator Implementation</h3>
+        <p>The Orchestrator is the central component of the system. It initializes all agents, manages the shared memory, and coordinates the workflow. Below is an example of its implementation:</p>
+        <div class="code-example">
+            <pre><code>
+class Orchestrator:
+    def __init__(self):
+        self.agents = {
+            "architect": ArchitectAgent(),
+            "coder": CoderAgent(),
+            "tester": TesterAgent(),
+            "debugger": DebuggerAgent()
+        }
+        self.shared_memory = SharedMemory()
+    
+    def process_task(self, task):
+        # 1. Architect creates design
+        design = self.agents["architect"].design(task)
+        self.shared_memory.save("design", design)
+        
+        # 2. Coder implements design
+        code = self.agents["coder"].implement(self.shared_memory.get("design"))
+        self.shared_memory.save("code", code)
+        
+        # 3. Tester verifies implementation
+        test_results = self.agents["tester"].test(self.shared_memory.get("code"))
+        self.shared_memory.save("test_results", test_results)
+        
+        # 4. Debugger fixes issues if tests fail
+        if not test_results["passed"]:
+            fixes = self.agents["debugger"].debug(
+                self.shared_memory.get("code"),
+                self.shared_memory.get("test_results")
+            )
+            self.shared_memory.save("code", fixes)
+        
+        return self.shared_memory.get("code")
+            </code></pre>
+        </div>
+
+        <h3>Agent Implementations</h3>
+        <p>Each agent has a specific role and is implemented as a separate class. Below are examples of their implementations:</p>
+
+        <div class="code-example">
+            <pre><code>
+class ArchitectAgent:
+    def design(self, task_description):
+        """
+        Analyze task requirements and create system design.
+        """
+        requirements = self._extract_requirements(task_description)
+        patterns = self._identify_patterns(requirements)
+        components = self._design_components(requirements, patterns)
+        interfaces = self._define_interfaces(components)
+        return {
+            "requirements": requirements,
+            "patterns": patterns,
+            "components": components,
+            "interfaces": interfaces
+        }
+            </code></pre>
+        </div>
+
+        <div class="code-example">
+            <pre><code>
+class CoderAgent:
+    def implement(self, design):
+        """
+        Convert design specifications to code implementation.
+        """
+        implementation_plan = self._create_implementation_plan(design)
+        code_files = {}
+        for component in design["components"]:
+            code_files[component["name"]] = self._implement_component(
+                component, design["interfaces"]
+            )
+        return code_files
+            </code></pre>
+        </div>
+
+        <div class="code-example">
+            <pre><code>
+class TesterAgent:
+    def test(self, code):
+        """
+        Validate the code by running test cases.
+        """
+        test_results = self._run_tests(code)
+        return test_results
+            </code></pre>
+        </div>
+
+        <div class="code-example">
+            <pre><code>
+class DebuggerAgent:
+    def debug(self, code, test_results):
+        """
+        Fix issues in the code based on test results.
+        """
+        fixed_code = self._apply_fixes(code, test_results)
+        return fixed_code
+            </code></pre>
+        </div>
+
+        <h2>Workflow Steps</h2>
+        <p>The workflow of the system is divided into the following steps:</p>
+        <div class="workflow">
+            <div class="workflow-step">
+                <h4>Step 1: Architecture Design</h4>
+                <p>The Architect Agent analyzes the task requirements and creates a system design specification.</p>
+            </div>
+            <div class="workflow-step">
+                <h4>Step 2: Code Implementation</h4>
+                <p>The Coder Agent translates the design into functional code.</p>
+            </div>
+            <div class="workflow-step">
+                <h4>Step 3: Testing</h4>
+                <p>The Tester Agent creates test cases and validates the implementation.</p>
+            </div>
+            <div class="workflow-step">
+                <h4>Step 4: Debugging</h4>
+                <p>The Debugger Agent fixes issues identified during testing.</p>
+            </div>
+            <div class="workflow-step">
+                <h4>Final Output</h4>
+                <p>The final, tested, and debugged code is returned as the output of the entire process.</p>
+            </div>
+        </div>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li>Specialized agents with distinct capabilities.</li>
+            <li>Shared memory system for collaboration.</li>
+            <li>Iterative refinement process.</li>
+            <li>Autonomous workflow management.</li>
+            <li>Modular design for easy extension.</li>
+            <li>Fault-tolerant through automatic debugging.</li>
+        </ul>
+
+        <h2>System Benefits</h2>
+        <ul>
+            <li>Reduces development time by automating repetitive tasks.</li>
+            <li>Ensures consistent code quality through systematic testing.</li>
+            <li>Leverages specialized expertise for each development phase.</li>
+            <li>Provides comprehensive documentation of the development process.</li>
+            <li>Scales across different project sizes and complexity levels.</li>
+            <li>Adapts to various programming languages and frameworks.</li>
+        </ul>
+    </div>
+</body>
+</html>
