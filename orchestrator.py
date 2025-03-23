@@ -7,11 +7,17 @@ from agents.analyzer import AnalyzerAgent
 from agents.writer import WriterAgent
 from agents.tester import TesterAgent
 from agents.debugger import DebuggerAgent
+from docker.errors import DockerException
 
 class Orchestrator:
     def __init__(self, openai_api_key: str):
         self.openai_api_key = openai_api_key
-        self.docker_client = docker.from_env()
+        try:
+            self.docker_client = docker.from_env()
+        except DockerException as e:
+            print(f"Error initializing Docker client: {e}")
+            self.docker_client = None
+        # Removed duplicate docker client initialization
         self.analyzer = AnalyzerAgent(openai_api_key)
         self.writer = WriterAgent(openai_api_key)
         self.tester = TesterAgent(openai_api_key)
@@ -65,6 +71,14 @@ class Orchestrator:
     
     def _execute_in_docker(self, code: str, language: str = "python") -> Dict[str, Any]:
         """Execute code safely in a Docker container"""
+        # Check if Docker client is available
+        if self.docker_client is None:
+            return {
+                "exit_code": -1,
+                "output": "Docker is not available. Cannot execute code in a container.",
+                "success": False
+            }
+            
         # Create a temporary file with the code
         temp_file = f"temp_code.{language}"
         with open(temp_file, "w") as f:

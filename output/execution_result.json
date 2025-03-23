@@ -1,0 +1,5 @@
+{
+  "exit_code": -1,
+  "output": "Docker is not available. Cannot execute code in a container.",
+  "success": false
+}

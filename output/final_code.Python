@@ -1,0 +1,17 @@
+import numpy as np
+
+def sum_two_numbers(num1, num2):
+    """Function to sum two numbers"""
+    
+    try:
+        num1 = float(num1)
+        num2 = float(num2)
+    except ValueError:
+        return 'Error: Inputs must be numbers'
+    
+    try:
+        result = np.add(num1, num2)
+    except OverflowError:
+        return 'Error: Result is too large to compute'
+    
+    return result

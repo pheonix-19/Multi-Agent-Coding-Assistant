@@ -1,11 +1,14 @@
 import openai
 import json
 from typing import Dict, List, Any
+import openai   
+import os
 
 class WriterAgent:
     def __init__(self, openai_api_key: str):
         self.api_key = openai_api_key
         openai.api_key = openai_api_key
+        self.client = openai
         
     def generate_code(self, analysis: Dict[str, Any], conversation_history: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate code based on the task analysis"""
@@ -39,7 +42,8 @@ class WriterAgent:
         """
         
         # Call GPT-4 with function calling
-        response = openai.ChatCompletion.create(
+        #self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        response = self.client.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             functions=[{
