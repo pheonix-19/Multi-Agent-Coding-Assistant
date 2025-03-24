@@ -4,248 +4,522 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonomous Multi-Agent Coding Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+        :root {
+            --primary: #3a6cf4;
+            --secondary: #27ae60;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #f5f5f5;
+            --gradient: linear-gradient(135deg, #3a6cf4, #00c6ff);
+        }
+        
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            line-height: 1.7;
             color: #333;
+            background-color: #fafafa;
         }
+        
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
         }
-        h1, h2, h3, h4 {
-            color: #2c3e50;
+        
+        /* Header */
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 80px 0 40px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        .agent {
-            background-color: #f9f9f9;
-            border-left: 4px solid #3498db;
-            padding: 10px 15px;
+        
+        header h1 {
+            font-size: 3rem;
             margin-bottom: 15px;
+            letter-spacing: -1px;
         }
-        .code-example {
-            margin: 20px 0;
+        
+        header p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
         }
-        .component-explanation {
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
+        
+        /* Sections */
+        section {
+            margin-bottom: 60px;
         }
-        .component-title {
-            color: #2980b9;
-            font-weight: bold;
-            margin-bottom: 10px;
+        
+        h2 {
+            color: var(--dark);
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
         }
-        .workflow {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 4px;
+            width: 60px;
+            background: var(--primary);
+            border-radius: 2px;
         }
-        .workflow-step {
-            background-color: #e8f4f8;
-            border-left: 4px solid #27ae60;
-            padding: 10px 15px;
+        
+        h3 {
+            color: var(--dark);
+            font-size: 1.6rem;
+            margin: 25px 0 15px;
         }
-        .workflow-step h4 {
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+        
+        /* Agent Cards */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .agent-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+        
+        .agent-card h3 {
             margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        
+        .agent-card i {
+            color: var(--primary);
+        }
+        
+        /* Code Blocks */
+        .code-container {
+            margin: 30px 0;
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-container h3 {
+            color: white;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        pre {
+            overflow-x: auto;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            color: #f8f8f2;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        /* Workflow */
+        .workflow {
+            margin: 30px 0;
+        }
+        
+        .workflow-step {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 20px;
+            box-shadow: 0 5px 15px rgba(58, 108, 244, 0.2);
+        }
+        
+        .step-content {
+            flex-grow: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step-content h4 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        /* Features & Benefits */
+        .list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .feature-list, .benefit-list {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-list h3, .benefit-list h3 {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
         ul {
-            margin: 10px 0;
-            padding-left: 20px;
+            list-style-type: none;
         }
-        li {
-            margin-bottom: 5px;
+        
+        ul li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 28px;
+        }
+        
+        ul li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        footer p {
+            opacity: 0.8;
+        }
+        
+        /* Code syntax highlighting */
+        .keyword { color: #ff79c6; }
+        .function { color: #50fa7b; }
+        .string { color: #f1fa8c; }
+        .comment { color: #6272a4; }
+        .class { color: #8be9fd; }
+        .variable { color: #f8f8f2; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .agents-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .list-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <h1>Autonomous Multi-Agent Coding Assistant</h1>
+            <p>A collaborative system of specialized AI agents that work together to design, code, and debug software projects autonomously.</p>
+        </div>
+        
+    </header>
     
-    <div class="container">
-        <h1>Autonomous Multi-Agent Coding Assistant</h1>
-        <p>A collaborative system of specialized AI agents that work together to design, code, and debug software projects autonomously.</p>
-        <img src="image.png" alt="alt text" width="auto" height="auto">
-        <h2>How It Works</h2>
-        <p>The system uses multiple AI agents with specialized skills that coordinate through a central orchestrator to solve complex programming tasks. Each agent has a specific role in the workflow:</p>
+    <main class="container">
+        <section id="how-it-works">
+            <h2>How It Works</h2>
 
-        <div class="agent">
-            <h3>Architect Agent</h3>
-            <p>Designs system architecture and component relationships. It analyzes the task requirements and creates a detailed design specification, including components, interfaces, and data flow.</p>
-        </div>
-        <div class="agent">
-            <h3>Coder Agent</h3>
-            <p>Transforms specifications into working code. It takes the design created by the Architect Agent and generates functional code for each component.</p>
-        </div>
-        <div class="agent">
-            <h3>Tester Agent</h3>
-            <p>Creates test cases and validates functionality. It ensures that the generated code meets the requirements and works as expected by running automated tests.</p>
-        </div>
-        <div class="agent">
-            <h3>Debugger Agent</h3>
-            <p>Identifies and fixes issues in code. If the Tester Agent finds any issues, the Debugger Agent analyzes the test results and applies fixes to the code.</p>
-        </div>
-        <div class="agent">
-            <h3>Orchestrator</h3>
-            <p>Coordinates agent activities and manages workflow. It ensures that all agents work together in a seamless and efficient manner.</p>
-        </div>
-
-        <h2>Code Architecture</h2>
-        <h3>Orchestrator Implementation</h3>
-        <p>The Orchestrator is the central component of the system. It initializes all agents, manages the shared memory, and coordinates the workflow. Below is an example of its implementation:</p>
-        <div class="code-example">
-            <pre><code>
-class Orchestrator:
-    def __init__(self):
+            <p>The system uses multiple AI agents with specialized skills that coordinate through a central orchestrator to solve complex programming tasks. Each agent has a specific role in the workflow:</p>
+            <img src="image.png" alt="alt text" width="1200" height="400">
+            <div class="agents-grid">
+                <div class="agent-card">
+                    <h3><i class="fas fa-sitemap"></i> Architect Agent</h3>
+                    <p>Designs system architecture and component relationships. It analyzes the task requirements and creates a detailed design specification, including components, interfaces, and data flow.</p>
+                </div>
+                
+                <div class="agent-card">
+                    <h3><i class="fas fa-code"></i> Coder Agent</h3>
+                    <p>Transforms specifications into working code. It takes the design created by the Architect Agent and generates functional code for each component.</p>
+                </div>
+                
+                <div class="agent-card">
+                    <h3><i class="fas fa-vial"></i> Tester Agent</h3>
+                    <p>Creates test cases and validates functionality. It ensures that the generated code meets the requirements and works as expected by running automated tests.</p>
+                </div>
+                
+                <div class="agent-card">
+                    <h3><i class="fas fa-bug"></i> Debugger Agent</h3>
+                    <p>Identifies and fixes issues in code. If the Tester Agent finds any issues, the Debugger Agent analyzes the test results and applies fixes to the code.</p>
+                </div>
+                
+                <div class="agent-card">
+                    <h3><i class="fas fa-project-diagram"></i> Orchestrator</h3>
+                    <p>Coordinates agent activities and manages workflow. It ensures that all agents work together in a seamless and efficient manner.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="code-architecture">
+            <h2>Code Architecture</h2>
+            
+            <h3>Orchestrator Implementation</h3>
+            <p>The Orchestrator is the central component of the system. It initializes all agents, manages the shared memory, and coordinates the workflow. Below is an example of its implementation:</p>
+            
+            <div class="code-container">
+                <h3>Orchestrator.py</h3>
+                <pre><code><span class="keyword">class</span> <span class="class">Orchestrator</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
         self.agents = {
-            "architect": ArchitectAgent(),
-            "coder": CoderAgent(),
-            "tester": TesterAgent(),
-            "debugger": DebuggerAgent()
+            <span class="string">"architect"</span>: ArchitectAgent(),
+            <span class="string">"coder"</span>: CoderAgent(),
+            <span class="string">"tester"</span>: TesterAgent(),
+            <span class="string">"debugger"</span>: DebuggerAgent()
         }
         self.shared_memory = SharedMemory()
     
-    def process_task(self, task):
-        # 1. Architect creates design
-        design = self.agents["architect"].design(task)
-        self.shared_memory.save("design", design)
+    <span class="keyword">def</span> <span class="function">process_task</span>(self, task):
+        <span class="comment"># 1. Architect creates design</span>
+        design = self.agents[<span class="string">"architect"</span>].design(task)
+        self.shared_memory.save(<span class="string">"design"</span>, design)
         
-        # 2. Coder implements design
-        code = self.agents["coder"].implement(self.shared_memory.get("design"))
-        self.shared_memory.save("code", code)
+        <span class="comment"># 2. Coder implements design</span>
+        code = self.agents[<span class="string">"coder"</span>].implement(self.shared_memory.get(<span class="string">"design"</span>))
+        self.shared_memory.save(<span class="string">"code"</span>, code)
         
-        # 3. Tester verifies implementation
-        test_results = self.agents["tester"].test(self.shared_memory.get("code"))
-        self.shared_memory.save("test_results", test_results)
+        <span class="comment"># 3. Tester verifies implementation</span>
+        test_results = self.agents[<span class="string">"tester"</span>].test(self.shared_memory.get(<span class="string">"code"</span>))
+        self.shared_memory.save(<span class="string">"test_results"</span>, test_results)
         
-        # 4. Debugger fixes issues if tests fail
-        if not test_results["passed"]:
-            fixes = self.agents["debugger"].debug(
-                self.shared_memory.get("code"),
-                self.shared_memory.get("test_results")
+        <span class="comment"># 4. Debugger fixes issues if tests fail</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> test_results[<span class="string">"passed"</span>]:
+            fixes = self.agents[<span class="string">"debugger"</span>].debug(
+                self.shared_memory.get(<span class="string">"code"</span>),
+                self.shared_memory.get(<span class="string">"test_results"</span>)
             )
-            self.shared_memory.save("code", fixes)
+            self.shared_memory.save(<span class="string">"code"</span>, fixes)
         
-        return self.shared_memory.get("code")
-            </code></pre>
-        </div>
-
-        <h3>Agent Implementations</h3>
-        <p>Each agent has a specific role and is implemented as a separate class. Below are examples of their implementations:</p>
-
-        <div class="code-example">
-            <pre><code>
-class ArchitectAgent:
-    def design(self, task_description):
-        """
+        <span class="keyword">return</span> self.shared_memory.get(<span class="string">"code"</span>)</code></pre>
+            </div>
+            
+            <h3>Agent Implementations</h3>
+            <p>Each agent has a specific role and is implemented as a separate class. Below are examples of their implementations:</p>
+            
+            <div class="code-container">
+                <h3>ArchitectAgent.py</h3>
+                <pre><code><span class="keyword">class</span> <span class="class">ArchitectAgent</span>:
+    <span class="keyword">def</span> <span class="function">design</span>(self, task_description):
+        <span class="string">"""
         Analyze task requirements and create system design.
-        """
+        """</span>
         requirements = self._extract_requirements(task_description)
         patterns = self._identify_patterns(requirements)
         components = self._design_components(requirements, patterns)
         interfaces = self._define_interfaces(components)
-        return {
-            "requirements": requirements,
-            "patterns": patterns,
-            "components": components,
-            "interfaces": interfaces
-        }
-            </code></pre>
-        </div>
-
-        <div class="code-example">
-            <pre><code>
-class CoderAgent:
-    def implement(self, design):
-        """
+        <span class="keyword">return</span> {
+            <span class="string">"requirements"</span>: requirements,
+            <span class="string">"patterns"</span>: patterns,
+            <span class="string">"components"</span>: components,
+            <span class="string">"interfaces"</span>: interfaces
+        }</code></pre>
+            </div>
+            
+            <div class="code-container">
+                <h3>CoderAgent.py</h3>
+                <pre><code><span class="keyword">class</span> <span class="class">CoderAgent</span>:
+    <span class="keyword">def</span> <span class="function">implement</span>(self, design):
+        <span class="string">"""
         Convert design specifications to code implementation.
-        """
+        """</span>
         implementation_plan = self._create_implementation_plan(design)
         code_files = {}
-        for component in design["components"]:
-            code_files[component["name"]] = self._implement_component(
-                component, design["interfaces"]
+        <span class="keyword">for</span> component <span class="keyword">in</span> design[<span class="string">"components"</span>]:
+            code_files[component[<span class="string">"name"</span>]] = self._implement_component(
+                component, design[<span class="string">"interfaces"</span>]
             )
-        return code_files
-            </code></pre>
-        </div>
-
-        <div class="code-example">
-            <pre><code>
-class TesterAgent:
-    def test(self, code):
-        """
+        <span class="keyword">return</span> code_files</code></pre>
+            </div>
+            
+            <div class="code-container">
+                <h3>TesterAgent.py</h3>
+                <pre><code><span class="keyword">class</span> <span class="class">TesterAgent</span>:
+    <span class="keyword">def</span> <span class="function">test</span>(self, code):
+        <span class="string">"""
         Validate the code by running test cases.
-        """
+        """</span>
         test_results = self._run_tests(code)
-        return test_results
-            </code></pre>
-        </div>
-
-        <div class="code-example">
-            <pre><code>
-class DebuggerAgent:
-    def debug(self, code, test_results):
-        """
+        <span class="keyword">return</span> test_results</code></pre>
+            </div>
+            
+            <div class="code-container">
+                <h3>DebuggerAgent.py</h3>
+                <pre><code><span class="keyword">class</span> <span class="class">DebuggerAgent</span>:
+    <span class="keyword">def</span> <span class="function">debug</span>(self, code, test_results):
+        <span class="string">"""
         Fix issues in the code based on test results.
-        """
+        """</span>
         fixed_code = self._apply_fixes(code, test_results)
-        return fixed_code
-            </code></pre>
+        <span class="keyword">return</span> fixed_code</code></pre>
+            </div>
+        </section>
+        
+        <section id="workflow">
+            <h2>Workflow Steps</h2>
+            <p>The workflow of the system is divided into the following steps:</p>
+            
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Architecture Design</h4>
+                        <p>The Architect Agent analyzes the task requirements and creates a system design specification.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Code Implementation</h4>
+                        <p>The Coder Agent translates the design into functional code.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Testing</h4>
+                        <p>The Tester Agent creates test cases and validates the implementation.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Debugging</h4>
+                        <p>The Debugger Agent fixes issues identified during testing.</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Final Output</h4>
+                        <p>The final, tested, and debugged code is returned as the output of the entire process.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="features-benefits">
+            <h2>Features & Benefits</h2>
+            
+            <div class="list-container">
+                <div class="feature-list">
+                    <h3><i class="fas fa-star"></i> Key Features</h3>
+                    <ul>
+                        <li>Specialized agents with distinct capabilities.</li>
+                        <li>Shared memory system for collaboration.</li>
+                        <li>Iterative refinement process.</li>
+                        <li>Autonomous workflow management.</li>
+                        <li>Modular design for easy extension.</li>
+                        <li>Fault-tolerant through automatic debugging.</li>
+                    </ul>
+                </div>
+                
+                <div class="benefit-list">
+                    <h3><i class="fas fa-award"></i> System Benefits</h3>
+                    <ul>
+                        <li>Reduces development time by automating repetitive tasks.</li>
+                        <li>Ensures consistent code quality through systematic testing.</li>
+                        <li>Leverages specialized expertise for each development phase.</li>
+                        <li>Provides comprehensive documentation of the development process.</li>
+                        <li>Scales across different project sizes and complexity levels.</li>
+                        <li>Adapts to various programming languages and frameworks.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>Autonomous Multi-Agent Coding Assistant </p>
         </div>
-
-        <h2>Workflow Steps</h2>
-        <p>The workflow of the system is divided into the following steps:</p>
-        <div class="workflow">
-            <div class="workflow-step">
-                <h4>Step 1: Architecture Design</h4>
-                <p>The Architect Agent analyzes the task requirements and creates a system design specification.</p>
-            </div>
-            <div class="workflow-step">
-                <h4>Step 2: Code Implementation</h4>
-                <p>The Coder Agent translates the design into functional code.</p>
-            </div>
-            <div class="workflow-step">
-                <h4>Step 3: Testing</h4>
-                <p>The Tester Agent creates test cases and validates the implementation.</p>
-            </div>
-            <div class="workflow-step">
-                <h4>Step 4: Debugging</h4>
-                <p>The Debugger Agent fixes issues identified during testing.</p>
-            </div>
-            <div class="workflow-step">
-                <h4>Final Output</h4>
-                <p>The final, tested, and debugged code is returned as the output of the entire process.</p>
-            </div>
-        </div>
-
-        <h2>Key Features</h2>
-        <ul>
-            <li>Specialized agents with distinct capabilities.</li>
-            <li>Shared memory system for collaboration.</li>
-            <li>Iterative refinement process.</li>
-            <li>Autonomous workflow management.</li>
-            <li>Modular design for easy extension.</li>
-            <li>Fault-tolerant through automatic debugging.</li>
-        </ul>
-
-        <h2>System Benefits</h2>
-        <ul>
-            <li>Reduces development time by automating repetitive tasks.</li>
-            <li>Ensures consistent code quality through systematic testing.</li>
-            <li>Leverages specialized expertise for each development phase.</li>
-            <li>Provides comprehensive documentation of the development process.</li>
-            <li>Scales across different project sizes and complexity levels.</li>
-            <li>Adapts to various programming languages and frameworks.</li>
-        </ul>
-    </div>
+    </footer>
 </body>
 </html>
