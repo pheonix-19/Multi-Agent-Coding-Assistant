@@ -10,11 +10,13 @@ from agents.debugger import DebuggerAgent
 from docker.errors import DockerException
 from docker import DockerClient
 from docker.errors import DockerException
+import re
 class Orchestrator:
     def __init__(self, openai_api_key: str):
         self.openai_api_key = openai_api_key
         try:
-            self.docker_client = DockerClient(base_url="npipe:////./pipe/docker_engine")
+            self.docker_client = docker.DockerClient(base_url="tcp://localhost:2375")
+            print("Connected to Docker using TCP connection")
         except DockerException as e:
             print(f"Error initializing Docker client: {e}")
             self.docker_client = None
@@ -69,6 +71,28 @@ class Orchestrator:
             "final_code": final_code,
             "execution_result": execution_result
         }
+    def get_file_extension(self, language):
+        """Map programming language to appropriate file extension"""
+        extensions = {
+            "python": "py",
+            "javascript": "js",
+            "java": "java",
+            "c": "c",
+            "cpp": "cpp",
+            "ruby": "rb",
+            # Add more as needed
+        }
+        return extensions.get(language.lower(), language.lower())
+    def get_execution_command(self, language, file_path):
+        """Get the appropriate command to execute code in the given language"""
+        commands = {
+            "python": ["python", file_path],
+            "javascript": ["node", file_path],
+            "java": ["java", file_path.replace(".java", "")],
+            "ruby": ["ruby", file_path],
+            # Add more as needed
+        }
+        return commands.get(language.lower(), [language.lower(), file_path])
     
     def _execute_in_docker(self, code: str, language: str = "python") -> Dict[str, Any]:
         """Execute code safely in a Docker container"""
@@ -79,20 +103,45 @@ class Orchestrator:
                 "output": "Docker is not available. Cannot execute code in a container.",
                 "success": False
             }
+        code = code.strip("`")
+        
+        # Use proper file extension based on language
+        file_extension = self.get_file_extension(language)
+        temp_file_name = f"temp_code.{file_extension}"
+        container_file_path = f"/app/{temp_file_name}"
+        
+        # # Handle input() function calls for non-interactive environments
+        if "input(" in code and language.lower() == "python":
+            # Use regex to replace input() calls with mock values
+            def input_replacement(match):
+                prompt = match.group(1) if match.group(1) else '"Input requested"'
+                return f'(lambda p: print(p) or "5")({prompt})'
             
+            # Replace all input() calls
+            code = re.sub(r'input\((.*?)\)', input_replacement, code)
+        
         # Create a temporary file with the code
-        temp_file = f"temp_code.{language}"
-        with open(temp_file, "w") as f:
+        with open(temp_file_name, "w") as f:
             f.write(code)
             
         try:
             # Run in a container with appropriate image based on language
             image_name = f"{language}:latest"
             
+            # Get the appropriate command for the language
+            execution_command = self.get_execution_command(language, container_file_path)
+            
+            # Create and run the container
             container = self.docker_client.containers.run(
                 image_name,
-                command=f"{language} /{temp_file}",
-                volumes={os.path.abspath(temp_file): {'bind': f'/{temp_file}', 'mode': 'ro'}},
+                command=execution_command,
+                volumes={
+                    os.path.abspath(temp_file_name): {
+                        'bind': container_file_path, 
+                        'mode': 'ro'
+                    }
+                },
+                working_dir="/app",  # Set working directory
                 detach=True,
                 mem_limit='100m',  # Limit resources for safety
                 network_mode='none'  # No network access
@@ -117,8 +166,8 @@ class Orchestrator:
             }
         finally:
             # Clean up
-            if os.path.exists(temp_file):
-                os.remove(temp_file)
+            if os.path.exists(temp_file_name):
+                os.remove(temp_file_name)
     
     def _add_to_history(self, role: str, content: Dict[str, Any]) -> None:
         """Add interaction to conversation history"""

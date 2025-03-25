@@ -1,31 +1,36 @@
 {
-  "main_objective": "Create a program to sum two numbers.",
+  "main_objective": "Maintain a student database by storing, updating, and retrieving student information",
   "recommended_language": "Python",
-  "language_justification": "Python is a versatile and easy-to-read language suitable for mathematical operations like addition. It offers built-in support for numerical calculations.",
+  "language_justification": "Python is versatile, easy to read, and has libraries like pandas for data manipulation",
   "key_features": [
-    "Input validation",
-    "Mathematical operation (addition)",
-    "Error handling"
+    "Add new student information",
+    "Update existing student information",
+    "Search for a student",
+    "Display all students' information"
   ],
   "recommended_libraries": [
-    "numpy",
-    "pandas"
+    "pandas",
+    "sqlite3"
   ],
   "inputs": [
-    "Two numbers to be summed"
+    "Student ID",
+    "Student Name",
+    "Student Age",
+    "Student Grade"
   ],
   "outputs": [
-    "The result of the addition"
+    "Confirmation message on successful addition/update",
+    "Student information on search",
+    "List of all students"
   ],
   "edge_cases": [
-    "Handling non-numeric inputs",
-    "Handling large numbers or overflow scenarios"
+    "Handling duplicate student IDs",
+    "Empty database",
+    "Invalid input formats"
   ],
   "implementation_steps": [
-    "Define a function to accept two numerical inputs",
-    "Validate the inputs to ensure they are numbers",
-    "Perform the addition operation",
-    "Handle any potential errors like non-numeric input or overflow",
-    "Return the sum of the two numbers"
+    "Create a database using SQLite to store student information",
+    "Write functions to add, update, search, and display student information",
+    "Handle edge cases such as duplicates and invalid inputs"
   ]
 }

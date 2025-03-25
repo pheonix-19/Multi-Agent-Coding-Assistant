@@ -1,17 +1,49 @@
-import numpy as np
+```python
+import sqlite3
 
-def sum_two_numbers(num1, num2):
-    """Function to sum two numbers"""
-    
+# Step 1: Create a database using SQLite to store student information
+conn = sqlite3.connect('student_database.db')
+cursor = conn.cursor()
+cursor.execute('''CREATE TABLE IF NOT EXISTS students (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    age INTEGER NOT NULL,
+                    grade TEXT
+)''')
+conn.commit()
+
+# Step 2: Write functions to add, update, search, and display student information
+
+def add_student(name: str, age: int, grade: str = None) -> None:
     try:
-        num1 = float(num1)
-        num2 = float(num2)
-    except ValueError:
-        return 'Error: Inputs must be numbers'
-    
+        cursor.execute('INSERT INTO students (name, age, grade) VALUES (?, ?, ?)', (name, age, grade))
+        conn.commit()
+        print('Student added successfully!')
+    except sqlite3.IntegrityError:
+        print('Student with the same name already exists!')
+        
+def update_student(student_id: int, name: str, age: int, grade: str = None) -> None:
     try:
-        result = np.add(num1, num2)
-    except OverflowError:
-        return 'Error: Result is too large to compute'
+        cursor.execute('UPDATE students SET name = ?, age = ?, grade = ? WHERE id = ?', (name, age, grade, student_id))
+        conn.commit()
+        print('Student information updated successfully!')
+    except sqlite3.Error:
+        print('Error updating student information!')
+        
+def search_student(name: str) -> None:
+    cursor.execute('SELECT * FROM students WHERE name = ?', (name,))
+    student = cursor.fetchone()
+    if student:
+        print(f'Student found - ID: {student[0]}, Name: {student[1]}, Age: {student[2]}, Grade: {student[3]}')
+    else:
+        print('Student not found!')
+        
+def display_all_students() -> None:
+    cursor.execute('SELECT * FROM students')
+    students = cursor.fetchall()
+    for student in students:
+        print(f'ID: {student[0]}, Name: {student[1]}, Age: {student[2]}, Grade: {student[3]}')
     
-    return result
+# Step 3: Handle edge cases such as duplicates and invalid inputs
+
+```

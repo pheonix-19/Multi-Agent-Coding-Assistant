@@ -48,20 +48,21 @@ def main():
     result = orchestrator.process_task(task_description)
     
     # Save results
-    save_results(result, args.output)
+    save_results(result, args.output,orchestrator)
     
     print(f"\n✅ Autonomous coding complete! Results saved to {args.output} directory")
     print(f"Final code execution result: {'SUCCESS' if result['execution_result']['success'] else 'FAILED'}")
 
-def save_results(result, output_dir):
+def save_results(result, output_dir, orchestrator):
     """Save all artifacts from the coding process"""
     
     # Save analysis
     with open(os.path.join(output_dir, 'analysis.json'), 'w') as f:
         json.dump(result['analysis'], f, indent=2)
     
-    # Save initial code
-    language = result['initial_code'].get('language', 'py')
+    # Save initial codesum 
+    language = result['initial_code'].get('language').lower()
+    language_ext = orchestrator.get_file_extension(language)
     with open(os.path.join(output_dir, f'initial_code.{language}'), 'w') as f:
         f.write(result['initial_code'].get('code', ''))
     
@@ -70,7 +71,7 @@ def save_results(result, output_dir):
         json.dump(result['test_results'], f, indent=2)
     
     # Save final code
-    with open(os.path.join(output_dir, f'final_code.{language}'), 'w') as f:
+    with open(os.path.join(output_dir, f'final_code.{language_ext}'), 'w') as f:
         f.write(result['final_code'])
     
     # Save execution results
